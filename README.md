@@ -2,6 +2,7 @@
 
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 [![Gratipay](https://img.shields.io/gratipay/IvanGaravito.svg)](https://gratipay.com/IvanGaravito)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FIvanGaravito%2Fdnp3-lib.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FIvanGaravito%2Fdnp3-lib?ref=badge_shield)
 
 > A DNP3 library for javascript
 
@@ -39,3 +40,6 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FIvanGaravito%2Fdnp3-lib.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FIvanGaravito%2Fdnp3-lib?ref=badge_large)
