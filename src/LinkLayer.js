@@ -7,13 +7,16 @@
 const DnpError = require('./DnpError.js')
 const DnpErrorPrefix = '[DnpError.LinkLayer]'
 
+let errNo = 0
+
 // Error constants
 const ERR_OK            = true
-const ERR_USINGNEW      = [1, `${DnpErrorPrefix} Constructor called directly`]
-const ERR_INVALIDDSTDIR = [2, `${DnpErrorPrefix} Invalid destination dir`]
-const ERR_INVALIDSRCDIR = [3, `${DnpErrorPrefix} Invalid source dir`]
-const ERR_SAMEDSTANDSRC = [4, `${DnpErrorPrefix} Same destination and source dir`]
-const ERR_INVALIDPHYSICAL = [5, `${DnpErrorPrefix} Invalid physical layer service`]
+const ERR_USINGNEW      = [++errNo, `${DnpErrorPrefix} Constructor called directly`]
+const ERR_INVALIDDSTDIR = [++errNo, `${DnpErrorPrefix} Invalid destination dir`]
+const ERR_INVALIDSRCDIR = [++errNo, `${DnpErrorPrefix} Invalid source dir`]
+const ERR_SAMEDSTANDSRC = [++errNo, `${DnpErrorPrefix} Same destination and source dir`]
+const ERR_INVALIDPHYSICALLAYER  = [++errNo, `${DnpErrorPrefix} Invalid physical layer service`]
+const ERR_INVALIDTRANSPORTLAYER = [++errNo, `${DnpErrorPrefix} Invalid transport layer service`]
 
 // Error object list to export
 const Errors = {
@@ -22,7 +25,8 @@ const Errors = {
   ERR_INVALIDDSTDIR,
   ERR_INVALIDSRCDIR,
   ERR_SAMEDSTANDSRC,
-  ERR_INVALIDPHYSICAL
+  ERR_INVALIDPHYSICALLAYER,
+  ERR_INVALIDTRANSPORTLAYER
 }
 
 const Block = require('./Block.js')
@@ -44,15 +48,13 @@ class LinkLayer {
   /**
    * Creates a new LinkLayer instance with specified options.
    * @param {Object} options - The datalink header layer options.
-   * @param {number} option.sdstDir - Destination dir.
-   * @param {number} option.scrDir - Source dir.
-   * @param {number} [option.physical] - PhysicalLayer instance to interface at physical layer.
+   * @param {number} options.sdstDir - Destination dir.
+   * @param {number} options.scrDir - Source dir.
    * @returns {LinkLayer} A new LinkLayer instance.
    */
-  static create ({dstDir, srcDir, physical}) {
+  static create ({dstDir, srcDir}) {
     dstDir = dstDir || null
     srcDir = srcDir || null
-    physical = physical || null
 
     if (!dstDir || dstDir < 0 || dstDir > 0xFFFE) {
       return new DnpError(ERR_INVALIDDSTDIR[0], ERR_INVALIDDSTDIR[1])
@@ -63,14 +65,10 @@ class LinkLayer {
     if (dstDir === srcDir) {
       return new DnpError(ERR_SAMEDSTANDSRC[0], ERR_SAMEDSTANDSRC[1])
     }
-    if (physical && !physical instanceof PhysicalLayer) {
-      return new DnpError(ERR_INVALIDPHYSICAL[0], ERR_INVALIDPHYSICAL[1])
-    }
 
     return new LinkLayer({
       dstDir,
       srcDir,
-      physical,
       _from: 'create'
     })
   }
@@ -86,8 +84,10 @@ class LinkLayer {
 
     this._dstDir = options.dstDir
     this._srcDir = options.srcDir
-    this._physical = options.physical
+    this._physicalLayer = null
+    this._transportLayer = null
   }
+
 
   // ATTRIBUTES
 
@@ -97,21 +97,37 @@ class LinkLayer {
   get srcDir () {
     return this._srcDir
   }
-  get physical () {
-    return this._dstDir
+  get physicalLayer () {
+    return this._physicalLayer
   }
-  set physical (physical) {
-    physical = physical || null
-    if (physical && !physical instanceof PhysicalLayer) {
-      return new DnpError(ERR_INVALIDPHYSICAL[0], ERR_INVALIDPHYSICAL[1])
+  set physicalLayer (layer) {
+    layer = layer || null
+    if (layer && !layer instanceof PhysicalLayer) {
+      throw new DnpError(ERR_INVALIDPHYSICAL[0], ERR_INVALIDPHYSICAL[1])
     }
 
-    this._physical = physical
+    // TODO: unbind event handlers when layer is null, otherwise bind them
+
+    this._physicalLayer = layer
+  }
+  get transportLayer () {
+    return this._transportLayer
+  }
+  set transportLayer (layer) {
+    layer = layer || null
+    if (layer && !layer instanceof TransportLayer) {
+      throw new DnpError(ERR_INVALIDTRANSPORTLAYER[0], ERR_INVALIDTRANSPORTLAYER[1])
+    }
+
+    // TODO: unbind event handlers when layer is null, otherwise bind them
+
+    this._transportLayer = layer
   }
 
   // METHODS
 
   toString () {
+    // TODO: convert to string
   }
 }
 
